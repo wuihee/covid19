@@ -1,17 +1,16 @@
-import xlrd
 import matplotlib.pyplot as plt
 import numpy as np
+import get_data
 
-file = 'covid19_data.xlsx'
-wb = xlrd.open_workbook(file)
-sheet = wb.sheet_by_index(0)
+values = get_data.main()
 
 data = {}
-for i in range(sheet.nrows):
-    ranking = sheet.cell_value(i, 0)
-    country = sheet.cell_value(i, 1)
+for v in values:
+    country = v[0]
+    ranking = float(v[1])
     if type(ranking) == float:
-        data[country] = ranking
+        if ranking > 0.1:
+            data[country] = ranking
 
 # Plot Bar Graph
 fig, ax = plt.subplots()
@@ -19,6 +18,7 @@ y_pos = np.arange(len(data))
 ax.barh(y_pos, data.values(), align='center')
 ax.set_yticks(y_pos)
 ax.set_yticklabels(data.keys())
+ax.invert_yaxis()
 ax.set_xlabel('% tested positive / % of population tested')
 ax.set_title('Rankings')
 
